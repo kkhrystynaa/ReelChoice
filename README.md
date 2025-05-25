@@ -15,3 +15,37 @@ ReelChoice — це вебзастосунок, який дозволяє кор
 - Додавання фільмів до списку "Переглянути пізніше"
 - Оцінювання та коментування фільмів
 - Отримання рекомендацій
+
+## 4. Налаштування середовища
+
+Клонування репозиторію
+```bash
+git clone https://github.com/kkhrystynaa/ReelChoice/tree/develop
+```
+```bash
+cd ReelChoice
+```
+
+Створення та активація віртуального середовища
+```bash
+python -m venv .venv
+```  
+```bash
+source .venv/bin/activate # Linux/Mac  
+.venv\Scripts\activate # Windows
+```  
+
+Встановлення залежностей
+```bash
+pip install -r requirements.txt
+```
+
+Налаштування бази даних
+```bash
+python manage.py migrate
+```
+
+Запуск сервера
+```bash
+python manage.py runserver
+```
