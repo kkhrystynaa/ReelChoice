@@ -20,7 +20,7 @@ ReelChoice — це вебзастосунок, який дозволяє кор
 
 Клонування репозиторію
 ```bash
-git clone https://github.com/kkhrystynaa/ReelChoice/tree/develop
+git clone https://github.com/kkhrystynaa/ReelChoice
 ```
 ```bash
 cd ReelChoice
