@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+home page
+<form method="post" action="{% url 'reelchoice_app:logout' %}">
+    {% csrf_token %}
+    <button type="submit">Logout</button>
+</form>
+
+{% endblock content %}
