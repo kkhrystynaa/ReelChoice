@@ -1,5 +1,4 @@
 import os
-import sys
 import django
 import csv
 from datetime import datetime
@@ -8,8 +7,7 @@ from django.conf import settings
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ReelChoice.settings')
 django.setup()
 
-from django.core.management.base import BaseCommand
-from reelchoice_app.models import Genre, Company, Country, Movie, Comment, Rating
+from reelchoice_app.models import Genre, Company, Country, Movie
 
 
 def import_movies():

@@ -50,7 +50,6 @@ class Movie(models.Model):
         blank=True
     )
     vote_count = models.PositiveIntegerField("Кількість голосів", null=True, blank=True)
-    popularity = models.FloatField("Популярність", null=True, blank=True)
     countries = models.ManyToManyField(
         Country,
         related_name="movies",
@@ -115,7 +114,6 @@ class Rating(models.Model):
         on_delete=models.CASCADE,
         related_name='ratings'
     )
-    content = models.TextField("Текст коментаря")
     created_at = models.DateTimeField("Час створення", auto_now_add=True)
 
     class Meta:
