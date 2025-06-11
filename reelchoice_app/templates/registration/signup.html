@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="min-h-screen w-full flex items-center justify-center bg-[#201F1F] text-white font-['Nunito Sans'] text-[14px] relative">
+
+  <div class="relative w-[400px] h-[660px] bg-[#2E2E2E] rounded-[24px] overflow-hidden px-[40px] pt-[40px]">
+
+    <h1 class="absolute top-[28px] right-[28px] text-[28px] font-semibold text-[#B94040] drop-shadow-md select-none">
+      ReelChoice
+    </h1>
+
+    <form method="post" class="mt-[40px]">
+      {% csrf_token %}
+
+      <h2 class="text-[24px] font-semibold mb-6">Signup</h2>
+
+      <!-- Username -->
+      <div class="space-y-2">
+          <label for="id_username" class="block text-[16px] italic">Username</label>
+          <input
+            type="text"
+            id="id_username"
+            name="username"
+            placeholder="Enter your username"
+            class="w-full h-[48px] bg-[#414141] rounded px-4 italic text-[#8B8B8B] text-[16px] focus:outline-none focus:ring-2 focus:ring-[#B94040]"
+          />
+          {% if form.username.errors %}
+            <p class="text-red-500 text-sm">{{ form.username.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+      <!-- Email -->
+      <div class="mb-4">
+        <label for="id_email" class="block text-[16px] italic mb-2">Email</label>
+        <input
+          type="email"
+          id="id_email"
+          name="email"
+          placeholder="Enter your email"
+          class="w-full h-[48px] bg-[#414141] rounded px-4 italic text-[#8B8B8B] text-[16px] focus:outline-none focus:ring-2 focus:ring-[#B94040]"
+        />
+        {% if form.email.errors %}
+          <p class="text-red-500 text-sm mt-1">{{ form.email.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Password1 -->
+      <div class="mb-4">
+        <label for="id_password1" class="block text-[16px] italic mb-2">Password</label>
+        <input
+          type="password"
+          id="id_password1"
+          name="password1"
+          placeholder="Enter your password"
+          class="w-full h-[48px] bg-[#414141] rounded px-4 italic text-[#8B8B8B] text-[16px] focus:outline-none focus:ring-2 focus:ring-[#B94040]"
+        />
+        {% if form.password1.errors %}
+          <p class="text-red-500 text-sm mt-1">{{ form.password1.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Password2 -->
+      <div class="mb-6">
+        <label for="id_password2" class="block text-[16px] italic mb-2">Confirm Password</label>
+        <input
+          type="password"
+          id="id_password2"
+          name="password2"
+          placeholder="Repeat your password"
+          class="w-full h-[48px] bg-[#414141] rounded px-4 italic text-[#8B8B8B] text-[16px] focus:outline-none focus:ring-2 focus:ring-[#B94040]"
+        />
+        {% if form.password2.errors %}
+          <p class="text-red-500 text-sm mt-1">{{ form.password2.errors.0 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Button -->
+      <button type="submit" class="w-full h-[48px] bg-[#D9D9D9] text-black text-[18px] font-semibold rounded-[12px] hover:bg-[#b63838] hover:text-white transition mb-6">
+        Submit
+      </button>
+
+      <p class="text-[16px] text-center italic font-light">
+        Already have an account?
+        <a href="{% url 'reelchoice_app:login' %}" class="text-[#B94040] hover:underline">Login</a>
+      </p>
+    </form>
+
+  </div>
+</div>
+{% endblock content %}
