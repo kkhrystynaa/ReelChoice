@@ -143,4 +143,3 @@ def get_movie_comments(movie_id):
                .order_by('created_at')
     )
     return comments
-

@@ -64,6 +64,5 @@ class TestViews(TestCase):
         self.client.login(**self.credentials)
         response = self.client.get(self.search_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTemplateUsed(response, 'search_results.html')
-
+        self.assertTemplateUsed(response, 'search_results.html') 
 
