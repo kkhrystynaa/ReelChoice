@@ -6,7 +6,6 @@
 
   <!-- Header -->
   <header class="relative overflow-hidden">
-    <div class="w-full h-[940px] bg-cover bg-center absolute top-0 left-0" style="background-image: url('{% static 'images/v1190_2657.png' %}')"></div>
     <div class="w-full h-[940px] bg-gradient-to-b from-[rgba(32,31,31,0.59)] to-[#201F1F] absolute top-0 left-0"></div>
 
     <nav class="relative z-10 flex items-center justify-between px-6 md:px-12 py-6">
@@ -67,20 +66,23 @@
     </nav>
 
     <!-- Main Section -->
-    <div class="relative z-10 max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10 px-6 pb-16">
-      <div class="flex-1 space-y-6">
-        <h2 class="text-5xl font-bold leading-tight">
-          Among thousands of movies,<br>
-          there is the one.<br>
-          <span class="text-[#B94040]">We know it.</span>
+    <div class="relative z-10 flex items-center pb-16 px-[212px]">
+    <div class="flex-1 space-y-6">
+        <h2 class="text-[44px] font-semibold leading-snug text-white font-['Nunito_Sans']">
+            Among thousands of movies,<br>
+            there is the one. We know it.
         </h2>
-        <p class="text-lg max-w-md">
-          Your next favourite film is just a click away – tailor‑made suggestions powered by your own taste.
+        <p class="text-[16px] text-white font-['Nunito_Sans']" style="font-variant: small-caps; letter-spacing: 1px;">
+            Every movie starts with a choice.<br>
+            Find yours on ReelChoice.
         </p>
-      </div>
-      <div class="flex-1">
-        <img src="{% static 'images/main_pic.jpg' %}" alt="Ladybug film reel" class="w-full h-auto">
-      </div>
+    </div>
+
+    <!-- Image Block -->
+    <div class="ml-6">
+        <img src="{% static 'images/main_pic.svg' %}" alt="Ladybug film reel"
+             class="w-[450px] h-[450px] object-contain">
+    </div>
     </div>
   </header>
 
