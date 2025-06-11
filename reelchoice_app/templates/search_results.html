@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2 class="text-2xl font-bold my-4">Search results for "{{ query }}"</h2>
+
+  {% if movies %}
+    <ul class="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {% for movie in movies %}
+        <li class="bg-gray-800 p-4 rounded">
+          <img src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}" alt="{{ movie.title }}" class="mb-2">
+          <h3 class="font-semibold text-lg">{{ movie.title }}</h3>
+          <p>Rating: {{ movie.vote_average }}</p>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No movies found:(.</p>
+  {% endif %}
+{% endblock %}

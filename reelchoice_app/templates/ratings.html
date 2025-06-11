@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2 class="text-xl font-bold mb-4">My Ratings</h2>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+  {% for r in ratings %}
+    <div class="bg-gray-800 p-4 rounded-lg shadow">
+      <img src="{{ r.poster_path }}" alt="{{ r.title }}" class="w-full h-auto mb-2 rounded">
+      <h3 class="text-white font-semibold">{{ r.title }}</h3>
+      <p class="text-yellow-400">Score: {{ r.score }}</p>
+    </div>
+  {% empty %}
+    <p class="text-white">You haven't rated any movies yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}
