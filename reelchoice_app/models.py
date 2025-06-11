@@ -36,24 +36,6 @@ class Genre(models.Model):
         return self.name
 
 
-
-class Genre(models.Model):
-    name = models.CharField("Назва жанру", max_length=100, unique=True)
-    slug = models.SlugField("Slug жанру", max_length=100, unique=True, blank=True)
-
-    class Meta:
-        db_table = "genre"
-        ordering = ["name"]
-
-    def __str__(self):
-        return self.name
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.name)
-        super().save(*args, **kwargs)
-
-
 class Movie(models.Model):
     id = models.IntegerField("ID з CSV", primary_key=True)
     title = models.CharField("Назва", max_length=255)
