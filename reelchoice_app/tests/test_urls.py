@@ -2,6 +2,7 @@ from django.test import SimpleTestCase
 from django.urls import reverse, resolve
 from reelchoice_app.views import home, authView
 from django.contrib.auth.views import LoginView
+from reelchoice_app import views
 
 class TestUrls(SimpleTestCase):
     def test_home_url_is_resolved(self):
@@ -20,3 +21,10 @@ class TestUrls(SimpleTestCase):
         response = self.client.get(reverse("reelchoice_app:login"))
         self.assertTemplateUsed(response, "registration/login.html")
 
+    def test_search_url_is_resolved(self):
+        url = reverse("reelchoice_app:search")
+        self.assertEqual(resolve(url).func, views.search)
+
+    def test_ratings_url_is_resolved(self):
+        url = reverse("reelchoice_app:ratings")
+        self.assertEqual(resolve(url).func, views.ratings_view)

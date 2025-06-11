@@ -41,5 +41,18 @@ class TestNavigation(TestCase):
         self.client.login(**self.credentials)
         response = self.client.post(self.logout_url, follow=True)
         self.assertRedirects(response, self.login_url)
-        self.assertContains(response, "<h3>Login", html=True) 
+        self.assertContains(response, "<h2 class=\"text-[24px] font-semibold mb-4\">Login</h2>", html=True)
 
+    def test_search_access_after_login(self):
+        self.client.login(**self.credentials)
+        search_url = reverse('reelchoice_app:search')
+        response = self.client.get(search_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'search_results.html') 
+
+    def test_ratings_access_after_login(self):
+        self.client.login(**self.credentials)
+        ratings_url = reverse('reelchoice_app:ratings')
+        response = self.client.get(ratings_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'ratings.html')
