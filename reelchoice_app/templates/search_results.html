@@ -2,111 +2,55 @@
 {% load static %}
 
 {% block content %}
-<div class="bg-[#201F1F] flex flex-col min-h-screen">
+  <div class="bg-[#201F1F] flex flex-col min-h-screen">
 
-  <!-- Header -->
-  <header class="relative overflow-visible">
-    <div class="w-full h-[940px] bg-[#201F1F] absolute top-0 left-0 -z-10"></div>
-    <nav class="relative z-20 flex items-center justify-between px-6 md:px-12 py-6 bg-[#201F1F]">
+    {% include "_header.html" %}
 
-      <div class="flex-shrink-0">
-        <h1 class="text-4xl font-semibold text-[#B94040] drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
-          <a href="{% url 'reelchoice_app:home' %}">ReelChoice</a>
-        </h1>
-      </div>
-
-      <form action="{% url 'reelchoice_app:search' %}" method="get" class="relative w-[651px] max-w-full h-[44px]">
-        <input 
-          type="text" 
-          name="q" 
-          placeholder="Search" 
-          value="{{ query }}" 
-          class="w-full h-full pr-12 pl-4 bg-[#2B2A2A] text-sm text-[#FEF7FF] placeholder-[#FEF7FF] rounded-[28px] focus:outline-none"
-        >
-        <button type="submit" class="absolute inset-y-0 right-0 flex items-center pr-4">
-          <img src="{% static 'images/search.png' %}" alt="Search" class="w-5 h-5" style="filter: brightness(0) saturate(100%) invert(99%) sepia(2%) saturate(3491%) hue-rotate(274deg) brightness(111%) contrast(102%); cursor:pointer;">
-        </button>
-      </form>
-
-      <div class="flex items-center relative" style="z-index: 9999;">
-        <div class="flex-shrink-0 mr-1">
-          <img src="{% static 'images/user.png' %}" alt="User" class="w-6 h-6">
-        </div>
-
-        <div class="relative">
-          <button id="profileBtn" class="flex items-center focus:outline-none" aria-haspopup="true" aria-expanded="false" type="button" aria-label="Toggle profile menu">
-            <img src="{% static 'images/triangle.png' %}" alt="Profile" class="w-4 h-4">
-          </button>
-
-          <div id="profileMenu" class="hidden absolute right-0 mt-2 w-48 bg-[#2B2A2A] text-[#FEF7FF] rounded-lg shadow-lg py-2"
-               style="min-width: 12rem; box-shadow: 0 4px 12px rgba(0,0,0,0.6);">
-            <div class="px-4 py-2 text-sm border-b border-[#444] text-red-500 select-none">
-              {% if request.user.is_authenticated %}
-                {{ request.user }}
-              {% else %}
-                Guest
-              {% endif %}
-            </div>
-            <a href="{% url 'reelchoice_app:ratings' %}" class="block px-4 py-2 text-sm hover:bg-[#3D3C3C] cursor-pointer">my ratings</a>
-            <form method="post" action="{% url 'reelchoice_app:logout' %}">
-              {% csrf_token %}
-              <button type="submit" class="w-full text-left px-4 py-2 text-sm hover:bg-[#3D3C3C] cursor-pointer">log out</button>
-            </form>
-          </div>
-        </div>
-      </div>
-
-    </nav>
-
-    <div class="relative z-10 px-6 md:px-12 py-8">
+    <div class="relative z-10 px-6 md:px-12 py-8 max-w-[1300px] mx-auto w-full">
       <h2 class="text-[42px] font-semibold leading-snug text-white font-['Nunito_Sans'] mb-4 break-words">
         Search results for "<span class="text-[#B94040]">{{ query }}</span>"
       </h2>
     </div>
-  </header>
 
-  <!-- Search Results Main -->
-  <main class="bg-[#201F1F] text-white px-6 md:px-12 pb-16 flex-grow">
-    {% if movies %}
-      <ul class="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-        {% for movie in movies %}
-          <li class="group cursor-pointer">
-            <div class="aspect-[2/3] bg-[rgba(128,128,128,0.25)] rounded-lg overflow-hidden">
-              {% if movie.poster_path %}
-                <img
-                  src="https://image.tmdb.org/t/p/w200{{ movie.poster_path }}"
+    <!-- Search Results Main -->
+    <main class="bg-[#201F1F] text-white px-6 md:px-12 pb-16 flex-grow max-w-[1300px] mx-auto">
+      {% if movies %}
+        <ul class="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {% for movie in movies %}
+            <li class="group cursor-pointer">
+              <div class="aspect-[2/3] bg-[rgba(128,128,128,0.25)] rounded-lg overflow-hidden">
+                {% if movie.poster_path %}
+                  <img
+                  src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}"
                   alt="{{ movie.title }}"
                   class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                />
-              {% else %}
-                <img
+                  />
+                {% else %}
+                  <img
                   src="{% static 'images/default_poster.jpg' %}"
                   alt="No image"
                   class="w-full h-full object-cover opacity-50"
-                />
-              {% endif %}
-            </div>
-            <div class="mt-3">
-              <h4 class="text-xl font-medium italic truncate" title="{{ movie.title }}">
-                {{ movie.title }}
-              </h4>
-              <div class="flex items-center gap-1 text-sm mt-1">
-                <img src="{% static 'images/rating.png' %}" alt="star" class="w-4 h-4">
-                <span class="font-light">{{ movie.vote_average|floatformat:1|default:"-" }}</span>
+                  />
+                {% endif %}
               </div>
-            </div>
-          </li>
-        {% endfor %}
-      </ul>
-    {% else %}
-      <p class="text-center text-gray-400 text-lg mt-12">No movies found</p>
-    {% endif %}
-  </main>
+              <div class="mt-3">
+                <h4 class="text-xl font-medium italic truncate" title="{{ movie.title }}">
+                  {{ movie.title }}
+                </h4>
+                <div class="flex items-center gap-1 text-sm mt-1">
+                  <img src="{% static 'images/rating.png' %}" alt="star" class="w-4 h-4">
+                  <span class="font-light">{{ movie.vote_average|floatformat:1|default:"-" }}</span>
+                </div>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-center text-gray-400 text-lg mt-12">No movies found</p>
+      {% endif %}
+    </main>
 
-  <!-- Footer -->
-  <footer class="h-[64px] bg-[#2E2E2E] text-center text-xs text-gray-400 flex items-center justify-center mt-8">
-    <p class="font-['Nunito_Sans'] font-light text-[20px]">ReelChoice, 2025</p>
-  </footer>
+    {% include "_footer.html" %}
 
-</div>
+  </div>
 {% endblock %}

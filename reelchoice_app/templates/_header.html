@@ -1,0 +1,65 @@
+{% load static %}
+<!-- Header -->
+<header class="relative">
+  <div class="w-full h-[940px] bg-[#201F1F] absolute top-0 left-0 -z-10"></div>
+
+  <nav class="relative z-20 flex items-center justify-between md:px-12 py-6 max-w-[1300px] mx-auto w-full">
+    <!-- Logo -->
+    <div class="flex-shrink-0">
+      <h1 class="text-4xl font-semibold text-[#B94040] drop-shadow-[0_4px_4px_rgba(0,0,0,0.25)]">
+        <a href="{% url 'reelchoice_app:home' %}">ReelChoice</a>
+      </h1>
+    </div>
+
+    <!-- Search -->
+    <div class="w-full max-w-2xl mx-auto px-4 sm:px-6 md:px-0 mt-4 md:mt-0">
+      <form action="{% url 'reelchoice_app:search' %}" method="get" class="relative w-full h-11">
+        <input
+        type="text"
+        name="q"
+        placeholder="Search"
+        class="w-full h-full pr-12 pl-4 bg-[#2B2A2A] text-sm text-[#FEF7FF] placeholder-[#FEF7FF] rounded-[28px] focus:outline-none"
+        >
+        <button type="submit" class="absolute inset-y-0 right-0 flex items-center pr-4">
+          <img src="{% static 'images/search.png' %}" alt="Search" class="w-5 h-5"
+               style="filter: brightness(0) saturate(100%) invert(99%) sepia(2%) saturate(3491%) hue-rotate(274deg) brightness(111%) contrast(102%); cursor: pointer;">
+        </button>
+      </form>
+    </div>
+
+    <!-- Profile Icon & Dropdown -->
+    <div class="flex items-center relative z-30">
+      <div class="flex-shrink-0 mr-1">
+        <img src="{% static 'images/user.png' %}" alt="User" class="w-6 h-6">
+      </div>
+
+      <div class="relative">
+        <button id="profileBtn" class="flex items-center focus:outline-none">
+          <img src="{% static 'images/triangle.png' %}" alt="Profile" class="w-4 h-4">
+        </button>
+
+        <!-- Dropdown menu -->
+        <div id="profileMenu"
+             class="hidden absolute right-0 mt-2 w-48 bg-[#2B2A2A] text-[#FEF7FF] rounded-lg shadow-lg py-2 z-40">
+          <div class="px-4 py-2 text-sm border-b border-[#444] text-red-500">
+            {% if request.user.is_authenticated %}
+              {{ request.user }}
+            {% else %}
+              Guest
+            {% endif %}
+          </div>
+          <a href="{% url 'reelchoice_app:ratings' %}"
+             class="block px-4 py-2 text-sm hover:bg-[#3D3C3C] cursor-pointer">my ratings</a>
+          <form method="post" action="{% url 'reelchoice_app:logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="w-full text-left px-4 py-2 text-sm hover:bg-[#3D3C3C] cursor-pointer">log
+              out
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+</header>
