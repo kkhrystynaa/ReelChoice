@@ -6,14 +6,14 @@
 
     {% include "_header.html" %}
 
-    <div class="relative z-10 px-6 md:px-12 py-8">
+    <div class="relative z-10 px-6 md:px-12 py-8 max-w-[1300px] mx-auto w-full">
       <h2 class="text-[42px] font-semibold leading-snug text-white font-['Nunito_Sans'] mb-4 break-words">
         Search results for "<span class="text-[#B94040]">{{ query }}</span>"
       </h2>
     </div>
 
     <!-- Search Results Main -->
-    <main class="bg-[#201F1F] text-white px-6 md:px-12 pb-16 flex-grow">
+    <main class="bg-[#201F1F] text-white px-6 md:px-12 pb-16 flex-grow max-w-[1300px] mx-auto">
       {% if movies %}
         <ul class="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {% for movie in movies %}
