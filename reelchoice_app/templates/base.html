@@ -11,9 +11,9 @@
  {% load static %}
  <link rel="stylesheet" href="{% static "css/style.css" %}">
  <script src="https://cdn.tailwindcss.com"></script>
- <script src="{% static 'js/profile-dropdown.js' %}"></script>
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
   {% block content %}{% endblock content %}
+<script src="{% static 'js/profile-dropdown.js' %}"></script>
 </body>
 </html>
