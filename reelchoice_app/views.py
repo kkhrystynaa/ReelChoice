@@ -1,10 +1,11 @@
-from django.shortcuts import render, redirect, get_object_or_404
 import random
-from django.contrib.auth.forms import UserCreationForm
+
 from django.contrib.auth.decorators import login_required
-from .services import search_movies_by_title, get_user_ratings_data, get_movies_by_genre, get_movie_detail_info, \
-    get_movie_comments
-from .models import Genre, Movie
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import render, redirect
+
+from .models import Movie
+from .services import search_movies_by_title, get_user_ratings_data
 
 
 @login_required
@@ -22,7 +23,8 @@ def home(request):
 
     # True Story
     true_story_qs = Movie.objects.filter(overview__icontains='true story')
-    true_story = random.sample(list(true_story_qs.values('title', 'poster_path', 'vote_average')), min(5, true_story_qs.count()))
+    true_story = random.sample(list(true_story_qs.values('title', 'poster_path', 'vote_average')),
+                               min(5, true_story_qs.count()))
 
     # Horror
     horror_qs = Movie.objects.filter(genres__name__iexact='Horror')
@@ -49,14 +51,14 @@ def home(request):
 
 
 def authView(request):
- if request.method == "POST":
-  form = UserCreationForm(request.POST or None)
-  if form.is_valid():
-   form.save()
-   return redirect("reelchoice_app:login")
- else:
-  form = UserCreationForm()
- return render(request, "registration/signup.html", {"form": form})
+    if request.method == "POST":
+        form = UserCreationForm(request.POST or None)
+        if form.is_valid():
+            form.save()
+            return redirect("reelchoice_app:login")
+    else:
+        form = UserCreationForm()
+    return render(request, "registration/signup.html", {"form": form})
 
 
 def search(request):
@@ -70,4 +72,17 @@ def search(request):
 
 def ratings_view(request):
     ratings = get_user_ratings_data(request.user)
+
+    # mock data for testing
+    if True:
+        test_qs = Movie.objects.all()
+        movies = random.sample(list(test_qs.values('title', 'poster_path')), min(10, test_qs.count()))
+        ratings = [
+            {
+                'title': r["title"],
+                'poster_path': r["poster_path"],
+                'score': random.choice([4.0, 4.5, 5.0])
+            }
+            for r in movies
+        ]
     return render(request, 'ratings.html', {'ratings': ratings})
