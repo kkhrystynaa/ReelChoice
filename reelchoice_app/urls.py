@@ -11,4 +11,5 @@ urlpatterns = [
     path("accounts/", include("django.contrib.auth.urls")),
     path("search/", views.search, name="search"),
     path('ratings/', views.ratings_view, name='ratings'),
+    path("movie/", views.movie_details_view, name="movie")
 ]

@@ -86,3 +86,10 @@ def ratings_view(request):
             for r in movies
         ]
     return render(request, 'ratings.html', {'ratings': ratings})
+
+
+def movie_details_view(request):
+    # mock data for testing
+    movie = Movie.objects.first()
+    movie_data = Movie.objects.filter(id=movie.id).values().first()
+    return render(request, "movie_detail.html", {"movie": movie_data})
