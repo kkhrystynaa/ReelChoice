@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+  {% include "_header.html" %}
+  <main class="bg-[#201F1F] text-white px-6 md:px-12 pb-16 flex-grow">
+
+    <div class="max-w-[1300px] mx-auto px-6 md:px-12 py-8">
+      <div class="flex flex-col md:flex-row gap-8">
+        <!-- Movie Poster -->
+        <div class="w-full md:w-1/4">
+          <div class="aspect-[2/3] bg-[rgba(128,128,128,0.25)] rounded-lg overflow-hidden">
+            {% if movie.poster_path %}
+              <img
+              src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}"
+              alt="{{ movie.title }}"
+              class="w-full h-full object-cover"
+              />
+            {% else %}
+              <img
+              src="{% static 'images/default_poster.jpg' %}"
+              alt="No image"
+              class="w-full h-full object-cover opacity-50"
+              />
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Movie Details -->
+        <div class="w-full md:w-3/4">
+          <h1 class="text-3xl md:text-4xl font-bold mb-4">{{ movie.title }}</h1>
+
+          <div class="items-center gap-2 text-sm mb-4">
+            <span class="font-light italic text-lg">
+              Year: {{ movie.release_date|date:"Y" }}<br>
+              Duration: {{ movie.runtime }} min</span>
+            <div class="flex items-center">
+              <span class="font-light italic text-lg">Average rating: {{ movie.vote_average|floatformat:1|default:"-" }}</span>
+              <img src="{% static 'images/rating.png' %}" alt="star" class="w-5 h-5 mx-1">
+            </div>
+          </div>
+
+          {% if movie.genres %}
+            <div class="mb-6">
+              <h2 class="text-lg font-semibold mb-2">Genres</h2>
+              <div class="flex flex-wrap gap-2">
+                {% for genre in movie.genres %}
+                  <span class="bg-gray-700 rounded-full px-3 py-1 text-sm">{{ genre }}</span>
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="my-6">
+        <h2 class="text-xl font-semibold mb-2">Overview</h2>
+        <p class="text-gray-300">{{ movie.overview }}</p>
+      </div>
+    </div>
+
+  </main>
+
+  {% include "_footer.html" %}
+{% endblock %}
