@@ -14,25 +14,21 @@ def home(request):
     user = request.user
 
     # Viewers' Choice
-    top_movies = Movie.objects.order_by('-vote_average')[:50]
-    viewers_choice = random.sample(list(top_movies.values('title', 'poster_path', 'vote_average')), 5)
+    top_movies = Movie.objects.all()
+    viewers_choice = random.sample(list(top_movies), min(5, top_movies.count()))
 
     # Recommended for you
     all_ids = list(Movie.objects.values_list('id', flat=True))
     recommended_ids = random.sample(all_ids, min(5, len(all_ids)))
-    recommended = Movie.objects.filter(id__in=recommended_ids).values('title', 'poster_path', 'vote_average')
-
-    # rated_movie_ids = Rating.objects.filter(user=request.user).values_list('movie_id', flat=True)
-    # recommended = Movie.objects.filter(id__in=rated_movie_ids).values('title', 'poster_path', 'vote_average')[:5]
+    recommended = Movie.objects.filter(id__in=recommended_ids)
 
     # True Story
     true_story_qs = Movie.objects.filter(overview__icontains='true story')
-    true_story = random.sample(list(true_story_qs.values('title', 'poster_path', 'vote_average')),
-                               min(5, true_story_qs.count()))
+    true_story = random.sample(list(true_story_qs), min(5, true_story_qs.count()))
 
     # Horror
     horror_qs = Movie.objects.filter(genres__name__iexact='Horror')
-    horror = random.sample(list(horror_qs.values('title', 'poster_path', 'vote_average')), min(5, horror_qs.count()))
+    horror = random.sample(list(horror_qs), min(5, horror_qs.count()))
 
     # Rate More Movies
     if user.is_authenticated:
@@ -41,7 +37,7 @@ def home(request):
     else:
         unrated_qs = Movie.objects.all()
 
-    unrated = random.sample(list(unrated_qs.values('title', 'poster_path', 'vote_average')), min(5, unrated_qs.count()))
+    unrated = random.sample(list(unrated_qs), min(5, unrated_qs.count()))
 
     sections = [
         {"title": "Viewers' Choice", "movies": viewers_choice},
@@ -52,6 +48,7 @@ def home(request):
     ]
 
     return render(request, "home.html", {"sections": sections})
+
 
 
 def authView(request):
@@ -91,12 +88,12 @@ def ratings_view(request):
         ]
     return render(request, 'ratings.html', {'ratings': ratings})
 
+def movie_details_view(request, movie_id):
+    movie = get_object_or_404(Movie.objects.prefetch_related("genres", "companies", "countries"), id=movie_id)
+    return render(request, "movie_detail.html", {"movie": movie})
 
-def movie_details_view(request):
-    # mock data for testing
-    movie = Movie.objects.first()
-    movie_data = Movie.objects.filter(id=movie.id).values().first()
-    return render(request, "movie_detail.html", {"movie": movie_data})
+
+
 
 
 def category_view(request, title):

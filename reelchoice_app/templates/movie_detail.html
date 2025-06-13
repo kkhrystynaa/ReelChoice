@@ -40,16 +40,14 @@
             </div>
           </div>
 
-          {% if movie.genres %}
             <div class="mb-6">
               <h2 class="text-lg font-semibold mb-2">Genres</h2>
               <div class="flex flex-wrap gap-2">
-                {% for genre in movie.genres %}
+                {% for genre in movie.genres.all %}
                   <span class="bg-gray-700 rounded-full px-3 py-1 text-sm">{{ genre }}</span>
                 {% endfor %}
               </div>
             </div>
-          {% endif %}
         </div>
       </div>
 

@@ -8,10 +8,10 @@
 
     <!-- Main Section -->
     <div
-    class="relative z-10 flex flex-col lg:flex-row items-center px-6 lg:px-12 max-w-[1300px] mx-auto text-center lg:text-left">
+      class="relative z-10 flex flex-col lg:flex-row items-center px-6 lg:px-12 max-w-[1300px] mx-auto text-center lg:text-left">
       <div class="flex-1 space-y-6">
         <h2
-        class="text-[28px] sm:text-[36px] lg:text-[44px] font-semibold leading-snug text-white font-['Nunito_Sans']">
+          class="text-[28px] sm:text-[36px] lg:text-[44px] font-semibold leading-snug text-white font-['Nunito_Sans']">
           Among thousands of movies,<br class="hidden lg:block">
           there is the one. We know it.
         </h2>
@@ -41,20 +41,20 @@
 
           <div class="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
             {% for movie in section.movies %}
-              <a href="">  <!-- add link to details -->
-                <article class="group">
+              <a href="{% url 'reelchoice_app:movie_detail' movie.id %}" class="group block">
+                <article>
                   <div class="aspect-[2/3] bg-[rgba(128,128,128,0.25)] rounded-lg overflow-hidden">
                     {% if movie.poster_path %}
                       <img
-                      src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}"
-                      alt="{{ movie.title }}"
-                      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}"
+                        alt="{{ movie.title }}"
+                        class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                       />
                     {% else %}
                       <img
-                      src="{% static 'images/default_poster.jpg' %}"
-                      alt="No image"
-                      class="w-full h-full object-cover opacity-50"
+                        src="{% static 'images/default_poster.jpg' %}"
+                        alt="No image"
+                        class="w-full h-full object-cover opacity-50"
                       />
                     {% endif %}
                   </div>
@@ -64,13 +64,12 @@
                       {{ movie.title }}
                     </h4>
                     <div class="flex items-center gap-1 text-sm mt-1">
-                      <img src="{% static 'images/rating.png' %}" alt="star" class="w-4 h-4">
+                      <img src="{% static 'images/rating.png' %}" alt="star" class="w-4 h-4" />
                       <span class="font-light">{{ movie.vote_average|floatformat:1|default:"-" }}</span>
                     </div>
                   </div>
                 </article>
               </a>
-
             {% endfor %}
           </div>
         </section>
