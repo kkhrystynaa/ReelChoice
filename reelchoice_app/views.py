@@ -2,10 +2,11 @@ import random
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import render, redirect
+from django.core.paginator import Paginator
+from django.shortcuts import render, redirect, get_object_or_404
 
-from .models import Movie
-from .services import search_movies_by_title, get_user_ratings_data
+from .models import Movie, Genre, Rating
+from .services import search_movies_by_title, get_user_ratings_data, get_movies_by_genre
 
 
 @login_required
@@ -20,6 +21,9 @@ def home(request):
     all_ids = list(Movie.objects.values_list('id', flat=True))
     recommended_ids = random.sample(all_ids, min(5, len(all_ids)))
     recommended = Movie.objects.filter(id__in=recommended_ids).values('title', 'poster_path', 'vote_average')
+
+    # rated_movie_ids = Rating.objects.filter(user=request.user).values_list('movie_id', flat=True)
+    # recommended = Movie.objects.filter(id__in=rated_movie_ids).values('title', 'poster_path', 'vote_average')[:5]
 
     # True Story
     true_story_qs = Movie.objects.filter(overview__icontains='true story')
@@ -93,3 +97,36 @@ def movie_details_view(request):
     movie = Movie.objects.first()
     movie_data = Movie.objects.filter(id=movie.id).values().first()
     return render(request, "movie_detail.html", {"movie": movie_data})
+
+
+def category_view(request, title):
+    if title == "Viewers' Choice":
+        movie_list = Movie.objects.order_by('-vote_average')[:50]
+    elif title == "Recommended for you":
+        all_ids = list(Movie.objects.values_list('id', flat=True))
+        recommended_ids = random.sample(all_ids, min(20, len(all_ids)))
+        movie_list = Movie.objects.filter(id__in=recommended_ids)
+    # elif title == "Recommended for you":
+    #    rated_ids = request.user.ratings.values_list('movie_id', flat=True)
+    #    movie_list = Movie.objects.filter(id__in=rated_ids).order_by('-vote_average')
+    elif title == "Based on a true story":
+        movie_list = Movie.objects.filter(overview__icontains="true story")
+    elif title == "Top Horror Movies":
+        movie_list = Movie.objects.filter(genres__name__iexact="Horror")
+    elif title == "Rate More Movies":
+        rated_ids = request.user.ratings.values_list('movie_id', flat=True)
+        movie_list = Movie.objects.exclude(id__in=rated_ids)
+    else:
+        movie_list = Movie.objects.none()
+
+    # Pagination
+    paginator = Paginator(movie_list, 15)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    return render(request, "category_detail.html", {
+        "title": title,
+        "movies": page_obj,
+        "is_paginated": page_obj.has_other_pages(),
+        "page_obj": page_obj,
+    })
