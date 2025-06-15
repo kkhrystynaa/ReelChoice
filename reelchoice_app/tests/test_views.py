@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
+from reelchoice_app.models import Movie
 
 
 class TestViews(TestCase):
@@ -14,12 +15,23 @@ class TestViews(TestCase):
         self.home_url = reverse('reelchoice_app:home')
         self.search_url = reverse('reelchoice_app:search')
         self.ratings_url = reverse('reelchoice_app:ratings')
+        self.movie_url = reverse('reelchoice_app:movie_detail', args=(1,))
+        self.category_url = reverse('reelchoice_app:category_view', args=("Viewers' Choice",))
 
         self.credentials = {
             'username': 'username',
             'password': 'correct_password'
         }
         self.user = User.objects.create_user(**self.credentials)
+
+        self.movie1 = Movie.objects.create(
+            id=1,
+            title="Inception",
+            poster_path="/inception.jpg",
+            runtime=148,
+            vote_average=8.8,
+            overview="Dreams within dreams."
+        )
 
     def test_home_view_redirects_if_not_logged_in(self):
         response = self.client.get(self.home_url)
@@ -65,4 +77,16 @@ class TestViews(TestCase):
         response = self.client.get(self.search_url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'search_results.html') 
+
+    def test_movie_view_accessible_after_login(self):
+        self.client.login(**self.credentials)
+        response = self.client.get(self.movie_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'movie_detail.html')
+
+    def test_category_view_accessible_after_login(self):
+        self.client.login(**self.credentials)
+        response = self.client.get(self.category_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, 'category_detail.html')
 

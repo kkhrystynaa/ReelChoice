@@ -28,3 +28,15 @@ class TestUrls(SimpleTestCase):
     def test_ratings_url_is_resolved(self):
         url = reverse("reelchoice_app:ratings")
         self.assertEqual(resolve(url).func, views.ratings_view)
+
+    def test_movie_url_is_resolved(self):
+        url = reverse("reelchoice_app:movie")
+        self.assertEqual(resolve(url).func, views.movie_details_view)
+
+    def test_movie_id_url_is_resolved(self):
+        url = reverse("reelchoice_app:movie_detail", args=(5,))
+        self.assertEqual(resolve(url).func, views.movie_details_view)
+
+    def test_category_title_url_is_resolved(self):
+        url = reverse("reelchoice_app:category_view", args=("Viewers' Choice",))
+        self.assertEqual(resolve(url).func, views.category_view)
