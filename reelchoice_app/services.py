@@ -9,11 +9,11 @@ User = get_user_model()
 def rate_movie(user, movie_id, score):
     """
     Задає або оновлює рейтинг для фільму від імені user.
-    - score: int від 0 до 10
+    - score: int від 1 до 10
     Повертає об’єкт Rating.
     """
-    if not 0 <= score <= 10:
-        raise ValidationError("Score must be between 0 and 10")
+    if not 1 <= score <= 10:
+        raise ValidationError("Score must be between 1 and 10")
 
     movie = get_object_or_404(Movie, pk=movie_id)
 

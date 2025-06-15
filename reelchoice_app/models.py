@@ -102,7 +102,7 @@ class Comment(models.Model):
 class Rating(models.Model):
     score = models.IntegerField(
         "Оцінка",
-        validators=[MinValueValidator(0), MaxValueValidator(10)],
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
     )
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
