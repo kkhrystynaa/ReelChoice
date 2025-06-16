@@ -61,15 +61,12 @@ def authView(request):
         form = UserCreationForm()
     return render(request, "registration/signup.html", {"form": form})
 
-
-def search(request):
-    query = request.GET.get("q", "")
-    results = search_movies_by_title(query) if query else []
-    return render(request, "search_results.html", {
-        "query": query,
-        "movies": results
-    })
-
+def search_movies(request):
+    query = request.GET.get('q')
+    results = []
+    if query:
+        results = Movie.objects.filter(title__icontains=query)
+    return render(request, 'search_results.html', {'query': query, 'movies': results})
 
 def ratings_view(request):
     ratings = get_user_ratings_data(request.user)
@@ -91,10 +88,6 @@ def ratings_view(request):
 def movie_details_view(request, movie_id):
     movie = get_object_or_404(Movie.objects.prefetch_related("genres", "companies", "countries"), id=movie_id)
     return render(request, "movie_detail.html", {"movie": movie})
-
-
-
-
 
 def category_view(request, title):
     if title == "Viewers' Choice":

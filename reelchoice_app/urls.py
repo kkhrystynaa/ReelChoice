@@ -9,7 +9,7 @@ urlpatterns = [
     path("signup/", authView, name="authView"),
     path("login/", LoginView.as_view(template_name="registration/login.html"), name="login"),
     path("accounts/", include("django.contrib.auth.urls")),
-    path("search/", views.search, name="search"),
+    path("search/", views.search_movies, name="search"),
     path('ratings/', views.ratings_view, name='ratings'),
     path("movie/", views.movie_details_view, name="movie"),
     path("category/<str:title>/", views.category_view, name="category_view"),
