@@ -62,8 +62,8 @@ class ItemBasedCF:
 
         predicted = target_item_mean + (numerator / denominator)
 
-        # Clamp to rating scale (1-5)
-        return max(1.0, min(5.0, predicted))
+        # Clamp to rating scale (1-10)
+        return max(1.0, min(10.0, predicted))
 
     def recommend_items(self, user_ratings: dict[int, float], n_recommendations: int = 10):
         """Generate recommendations for a user"""
@@ -84,7 +84,6 @@ class ItemBasedCF:
                       'n_similar_items': self.n_similar_items, 'all_items': self.all_items}
         with open(filepath, 'wb') as f:
             pickle.dump(model_data, f)
-        print(f"Model successfully saved to {filepath}")
 
     def load_model(self, filepath: str):
         """Load a trained model"""
@@ -98,5 +97,3 @@ class ItemBasedCF:
         self.item_means = model_data['item_means']
         self.n_similar_items = model_data['n_similar_items']
         self.all_items = model_data['all_items']
-
-        print(f"Model successfully loaded from {filepath}")

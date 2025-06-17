@@ -13,11 +13,11 @@ class TestRecommendations(TestCase):
         self.model.load_model(model_path)
 
         self.sample_user_ratings = {
-            27205: 5.0,  # Inception
-            157336: 4.5,  # Interstellar
-            155: 3.5,  # The Dark Knight
-            19995: 4.5,  # Avatar
-            24428: 4.0  # The Avengers
+            27205: 10.0,  # Inception
+            157336: 9.0,  # Interstellar
+            155: 6.0,  # The Dark Knight
+            19995: 8.0,  # Avatar
+            24428: 8.0  # The Avengers
         }
 
     def test_model_loaded_successfully(self):
@@ -33,7 +33,7 @@ class TestRecommendations(TestCase):
             predicted_rating = self.model.predict_rating(self.sample_user_ratings, test_movie_id)
             self.assertIsNotNone(predicted_rating)
             self.assertGreaterEqual(predicted_rating, 1.0)
-            self.assertLessEqual(predicted_rating, 5.0)
+            self.assertLessEqual(predicted_rating, 10.0)
         else:
             self.skipTest(f"Movie ID {test_movie_id} not found in the similarities to user ratings")
 
@@ -45,7 +45,7 @@ class TestRecommendations(TestCase):
         for movie_id, rating in recommendations:
             self.assertNotIn(movie_id, self.sample_user_ratings)
             self.assertGreaterEqual(rating, 1.0)
-            self.assertLessEqual(rating, 5.0)
+            self.assertLessEqual(rating, 10.0)
 
         ratings = [rating for _, rating in recommendations]
         self.assertEqual(ratings, sorted(ratings, reverse=True))
