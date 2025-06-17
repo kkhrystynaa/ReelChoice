@@ -23,7 +23,7 @@ class TestUrls(SimpleTestCase):
 
     def test_search_url_is_resolved(self):
         url = reverse("reelchoice_app:search")
-        self.assertEqual(resolve(url).func, views.search)
+        self.assertEqual(resolve(url).func, views.search_movies)
 
     def test_ratings_url_is_resolved(self):
         url = reverse("reelchoice_app:ratings")
