@@ -11,7 +11,7 @@ from ReelChoice import settings
 from recommender.recommender import ItemBasedCF
 from .forms import CommentForm
 from .models import Movie, Rating
-from .services import write_comment
+from .services import write_comment, rate_movie
 
 MODEL_PATH = os.path.join(settings.BASE_DIR, 'recommender/trained_model.pkl')
 
@@ -30,12 +30,12 @@ def home(request):
     # Recommended for you (рекомендаційна система)
     user_ratings_qs = Rating.objects.filter(user=user)
     user_ratings = {r.movie_id: r.score for r in user_ratings_qs}
+    recommendations = item_based_model.recommend_items(user_ratings, n_recommendations=20)
+    recommended_ids_full = [movie_id for movie_id, _ in recommendations]
 
-    recommendations = item_based_model.recommend_items(user_ratings, n_recommendations=5)
-    recommended_ids = [item[0] for item in recommendations]
-
-    # fallback, якщо нема рекомендацій
-    if not recommended_ids:
+    if recommended_ids_full:
+        recommended_ids = random.sample(recommended_ids_full, min(5, len(recommended_ids_full)))
+    else:
         all_ids = list(Movie.objects.values_list('id', flat=True))
         recommended_ids = random.sample(all_ids, min(5, len(all_ids)))
 
@@ -128,13 +128,11 @@ def movie_details_view(request, movie_id):
     if request.method == 'POST':
         if "score" in request.POST:
             score = request.POST.get("score")
-            if score and score.isdigit() and 1 <= int(score) <= 10:
-                Rating.objects.update_or_create(
-                    user=request.user,
-                    movie=movie,
-                    defaults={"score": int(score)}
-                )
+            try:
+                rate_movie(request.user, movie.id, int(score))
                 return redirect('reelchoice_app:movie_detail', movie_id=movie.id)
+            except ValidationError as e:
+                form_error = str(e)
 
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -157,16 +155,14 @@ def movie_details_view(request, movie_id):
 def category_view(request, title):
     if title == "Viewers' Choice":
         movie_list = Movie.objects.order_by('-vote_average')[:50]
+
     elif title == "Recommended for you":
-        # Беремо рейтинги поточного користувача
         user_ratings_qs = Rating.objects.filter(user=request.user)
         user_ratings = {r.movie_id: r.score for r in user_ratings_qs}
 
-        # Отримуємо рекомендації
         recommendations = item_based_model.recommend_items(user_ratings, n_recommendations=20)
-        recommended_ids = [item[0] for item in recommendations]
+        recommended_ids = [movie_id for movie_id, _ in recommendations]
 
-        # Якщо рекомендацій немає, то виводимо рандомні фільми
         if not recommended_ids:
             all_ids = list(Movie.objects.values_list('id', flat=True))
             recommended_ids = random.sample(all_ids, min(20, len(all_ids)))
