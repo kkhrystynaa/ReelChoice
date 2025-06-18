@@ -12,15 +12,15 @@
           <div class="aspect-[2/3] bg-[rgba(128,128,128,0.25)] rounded-lg overflow-hidden">
             {% if movie.poster_path %}
               <img
-              src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}"
-              alt="{{ movie.title }}"
-              class="w-full h-full object-cover"
+                src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}"
+                alt="{{ movie.title }}"
+                class="w-full h-full object-cover"
               />
             {% else %}
               <img
-              src="{% static 'images/default_poster.jpg' %}"
-              alt="No image"
-              class="w-full h-full object-cover opacity-50"
+                src="{% static 'images/default_poster.jpg' %}"
+                alt="No image"
+                class="w-full h-full object-cover opacity-50"
               />
             {% endif %}
           </div>
@@ -33,27 +33,77 @@
           <div class="items-center gap-2 text-sm mb-4">
             <span class="font-light italic text-lg">
               Year: {{ movie.release_date|date:"Y" }}<br>
-              Duration: {{ movie.runtime }} min</span>
+              Duration: {{ movie.runtime }} min
+            </span>
             <div class="flex items-center">
-              <span class="font-light italic text-lg">Average rating: {{ movie.vote_average|floatformat:1|default:"-" }}</span>
-              <img src="{% static 'images/rating.png' %}" alt="star" class="w-5 h-5 mx-1">
+              <span class="font-light italic text-lg">
+                Average rating: {{ movie.vote_average|floatformat:1|default:"-" }}
+              </span>
+              <img src="{% static 'images/rating.png' %}" alt="star" class="w-5 h-5 mx-1" />
             </div>
           </div>
 
-            <div class="mb-6">
-              <h2 class="text-lg font-semibold mb-2">Genres</h2>
-              <div class="flex flex-wrap gap-2">
-                {% for genre in movie.genres.all %}
-                  <span class="bg-gray-700 rounded-full px-3 py-1 text-sm">{{ genre }}</span>
-                {% endfor %}
-              </div>
+          <div class="mb-6">
+            <h2 class="text-lg font-semibold mb-2">Genres</h2>
+            <div class="flex flex-wrap gap-2">
+              {% for genre in movie.genres.all %}
+                <span class="bg-gray-700 rounded-full px-3 py-1 text-sm">{{ genre }}</span>
+              {% endfor %}
             </div>
+          </div>
         </div>
       </div>
 
       <div class="my-6">
         <h2 class="text-xl font-semibold mb-2">Overview</h2>
         <p class="text-gray-300">{{ movie.overview }}</p>
+      </div>
+      
+      <!-- Comments Section -->
+      <div class="mt-10">
+        <h2 class="text-2xl font-semibold mb-4 text-white">Comments section</h2>
+      
+        {% if user.is_authenticated %}
+          <form method="post" class="mb-8">
+            {% csrf_token %}
+            <div>
+              {{ form.content }}
+            </div>
+            {% if form_error %}
+              <p class="text-red-400 mt-2">{{ form_error }}</p>
+            {% endif %}
+            <button
+              type="submit"
+              class="mt-4 px-5 py-2 bg-gray-300 text-black rounded-lg hover:bg-[#BA4040] transition font-semibold shadow"
+            >
+              Post
+            </button>
+          </form>
+        {% endif %}
+
+        <!-- Added Comments -->
+        <div class="space-y-6">
+          {% for comment in comments %}
+            <div class="bg-[#2a2a2a] p-4 rounded-lg shadow-sm">
+              <div class="flex items-start gap-4">
+                <div
+                  class="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center text-white font-bold uppercase"
+                >
+                  {{ comment.user.username|first }}
+                </div>
+                <div class="flex-1">
+                  <div class="flex justify-between items-center">
+                    <span class="font-semibold text-white">{{ comment.user.username }}</span>
+                    <span class="text-sm text-gray-400">{{ comment.created_at|date:"d.m.Y, H:i" }}</span>
+                  </div>
+                  <p class="text-gray-300 mt-2 whitespace-pre-line">{{ comment.content }}</p>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <p class="text-gray-500">No comments yet. Be the first to comment!</p>
+          {% endfor %}
+        </div>
       </div>
     </div>
 

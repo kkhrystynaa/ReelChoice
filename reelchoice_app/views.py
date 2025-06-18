@@ -2,11 +2,13 @@ import random
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.shortcuts import render, redirect, get_object_or_404
 
+from .forms import CommentForm
 from .models import Movie, Genre, Rating
-from .services import search_movies_by_title, get_user_ratings_data, get_movies_by_genre
+from .services import search_movies_by_title, get_user_ratings_data, get_movies_by_genre, write_comment
 
 
 @login_required
@@ -50,7 +52,6 @@ def home(request):
     return render(request, "home.html", {"sections": sections})
 
 
-
 def authView(request):
     if request.method == "POST":
         form = UserCreationForm(request.POST or None)
@@ -61,12 +62,14 @@ def authView(request):
         form = UserCreationForm()
     return render(request, "registration/signup.html", {"form": form})
 
+
 def search_movies(request):
     query = request.GET.get('q')
     results = []
     if query:
         results = Movie.objects.filter(title__icontains=query)
     return render(request, 'search_results.html', {'query': query, 'movies': results})
+
 
 def ratings_view(request):
     ratings = get_user_ratings_data(request.user)
@@ -85,9 +88,30 @@ def ratings_view(request):
         ]
     return render(request, 'ratings.html', {'ratings': ratings})
 
+
 def movie_details_view(request, movie_id):
-    movie = get_object_or_404(Movie.objects.prefetch_related("genres", "companies", "countries"), id=movie_id)
-    return render(request, "movie_detail.html", {"movie": movie})
+    movie = get_object_or_404(Movie.objects.prefetch_related("genres", "companies", "countries", "comments__user"), id=movie_id)
+
+    comments = movie.comments.all().order_by('-created_at')
+    form = CommentForm()
+    form_error = None
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            try:
+                write_comment(request.user, movie.id, form.cleaned_data["content"])
+                return redirect('reelchoice_app:movie_detail', movie_id=movie.id)
+            except ValidationError as e:
+                form_error = str(e)
+
+    return render(request, "movie_detail.html", {
+        "movie": movie,
+        "form": form,
+        "form_error": form_error,
+        "comments": comments,
+    })
+
 
 def category_view(request, title):
     if title == "Viewers' Choice":
