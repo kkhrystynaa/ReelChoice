@@ -18,7 +18,7 @@
         <ul class="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {% for movie in movies %}
             <li class="group cursor-pointer">
-              <a href="">
+              <a href="{% url 'reelchoice_app:movie_detail' movie.id %}">
                 <div class="aspect-[2/3] bg-[rgba(128,128,128,0.25)] rounded-lg overflow-hidden">
                   {% if movie.poster_path %}
                     <img
