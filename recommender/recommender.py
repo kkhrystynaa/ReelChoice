@@ -36,8 +36,11 @@ class ItemBasedCF:
 
         print(f"Training complete! Computed similarities for {len(self.item_similarities)} items")
 
-    def predict_rating(self, user_ratings: dict[int, float], target_item: int):
-        """Predict rating for a target item based on user's existing ratings"""
+    def predict_score(self, user_ratings: dict[int, float], target_item: int):
+        """
+        Predict score for a target item based on user's existing ratings.
+        Ratings should be ordered from oldest to newest
+        """
 
         # Check if target_item is known and has similarity data and mean rating
         if target_item not in self.item_means or target_item not in self.item_similarities:
@@ -48,11 +51,20 @@ class ItemBasedCF:
 
         numerator = 0
         denominator = 0
+        ratings_count = len(user_ratings)
+        last_ratings_boost = 1
 
-        for item_id, user_rating in user_ratings.items():
+        for i, (item_id, user_rating) in enumerate(user_ratings.items()):
             if item_id in similar_items_to_target and item_id in self.item_means:
                 similarity = similar_items_to_target[item_id]
                 centered_rating = user_rating - self.item_means[item_id]
+                if i == ratings_count - 1:
+                    last_ratings_boost = 3
+                elif i == ratings_count - 2:
+                    last_ratings_boost = 2.5
+                elif i == ratings_count - 3:
+                    last_ratings_boost = 2
+
                 numerator += similarity * centered_rating
                 denominator += similarity  # Assuming similarity scores are positive due to filtering in fit
 
@@ -60,10 +72,8 @@ class ItemBasedCF:
             # No similar items rated by the user that can be used for prediction
             return None
 
-        predicted = target_item_mean + (numerator / denominator)
-
-        # Clamp to rating scale (1-10)
-        return max(1.0, min(10.0, predicted))
+        score = target_item_mean + (numerator / denominator * last_ratings_boost)
+        return score
 
     def recommend_items(self, user_ratings: dict[int, float], n_recommendations: int = 10):
         """Generate recommendations for a user"""
@@ -71,9 +81,9 @@ class ItemBasedCF:
 
         predictions = []
         for item in candidate_items:
-            predicted_rating = self.predict_rating(user_ratings, item)
-            if predicted_rating is not None:
-                predictions.append((item, predicted_rating))
+            score = self.predict_score(user_ratings, item)
+            if score is not None:
+                predictions.append((item, score))
 
         predictions.sort(key=lambda x: x[1], reverse=True)
         return predictions[:n_recommendations]

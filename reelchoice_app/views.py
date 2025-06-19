@@ -157,7 +157,7 @@ def category_view(request, title):
         movie_list = Movie.objects.order_by('-vote_average')[:50]
 
     elif title == "Recommended for you":
-        user_ratings_qs = Rating.objects.filter(user=request.user)
+        user_ratings_qs = Rating.objects.filter(user=request.user).order_by('created_at')
         user_ratings = {r.movie_id: r.score for r in user_ratings_qs}
 
         recommendations = item_based_model.recommend_items(user_ratings, n_recommendations=20)
@@ -167,7 +167,9 @@ def category_view(request, title):
             all_ids = list(Movie.objects.values_list('id', flat=True))
             recommended_ids = random.sample(all_ids, min(20, len(all_ids)))
 
-        movie_list = Movie.objects.filter(id__in=recommended_ids)
+        # get movies list keeping the recommendations order
+        movies_by_id = {movie.id: movie for movie in Movie.objects.filter(id__in=recommended_ids)}
+        movie_list = [movies_by_id[movie_id] for movie_id in recommended_ids if movie_id in movies_by_id]
 
     elif title == "Based on a true story":
         movie_list = Movie.objects.filter(overview__icontains="true story")
