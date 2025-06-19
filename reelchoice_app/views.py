@@ -1,3 +1,4 @@
+import math
 import os
 import random
 
@@ -24,7 +25,7 @@ def home(request):
     user = request.user
 
     # Viewers' Choice
-    top_movies = Movie.objects.all()
+    top_movies = Movie.objects.order_by('-vote_average')[:50]
     viewers_choice = random.sample(list(top_movies), min(5, top_movies.count()))
 
     # Recommended for you (рекомендаційна система)
@@ -36,8 +37,10 @@ def home(request):
     if recommended_ids_full:
         recommended_ids = random.sample(recommended_ids_full, min(5, len(recommended_ids_full)))
     else:
-        all_ids = list(Movie.objects.values_list('id', flat=True))
-        recommended_ids = random.sample(all_ids, min(5, len(all_ids)))
+        movie_count = Movie.objects.count()
+        limit = int(math.ceil(movie_count * 0.2))
+        top_movies_ids = list(Movie.objects.order_by('-vote_count').values_list('id', flat=True)[:limit])
+        recommended_ids = random.sample(top_movies_ids, min(5, len(top_movies_ids)))
 
     recommended = Movie.objects.filter(id__in=recommended_ids)
 
@@ -154,13 +157,17 @@ def movie_details_view(request, movie_id):
 
 def category_view(request, title):
     if title == "Viewers' Choice":
-        movie_list = Movie.objects.order_by('-vote_average')[:50]
+        # Filter by top 20% popular movies IDs and then order by vote_average
+        movie_count = Movie.objects.count()
+        limit = int(math.ceil(movie_count * 0.2))
+        top_movies_ids = Movie.objects.order_by('-vote_count').values_list('id', flat=True)[:limit]
+        movie_list = Movie.objects.filter(id__in=top_movies_ids).order_by('-vote_average')[:100]
 
     elif title == "Recommended for you":
         user_ratings_qs = Rating.objects.filter(user=request.user).order_by('created_at')
         user_ratings = {r.movie_id: r.score for r in user_ratings_qs}
 
-        recommendations = item_based_model.recommend_items(user_ratings, n_recommendations=20)
+        recommendations = item_based_model.recommend_items(user_ratings, n_recommendations=100)
         recommended_ids = [movie_id for movie_id, _ in recommendations]
 
         if not recommended_ids:
