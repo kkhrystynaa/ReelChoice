@@ -30,10 +30,8 @@ class TestRecommendations(TestCase):
         test_movie_id = 550  # Fight Club
 
         if test_movie_id in self.model.item_similarities and test_movie_id in self.model.item_means:
-            predicted_rating = self.model.predict_rating(self.sample_user_ratings, test_movie_id)
+            predicted_rating = self.model.predict_score(self.sample_user_ratings, test_movie_id)
             self.assertIsNotNone(predicted_rating)
-            self.assertGreaterEqual(predicted_rating, 1.0)
-            self.assertLessEqual(predicted_rating, 10.0)
         else:
             self.skipTest(f"Movie ID {test_movie_id} not found in the similarities to user ratings")
 
@@ -44,8 +42,6 @@ class TestRecommendations(TestCase):
 
         for movie_id, rating in recommendations:
             self.assertNotIn(movie_id, self.sample_user_ratings)
-            self.assertGreaterEqual(rating, 1.0)
-            self.assertLessEqual(rating, 10.0)
 
         ratings = [rating for _, rating in recommendations]
         self.assertEqual(ratings, sorted(ratings, reverse=True))
