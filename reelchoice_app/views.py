@@ -105,7 +105,7 @@ def ratings_view(request):
         for r in ratings_qs
     ]
 
-    paginator = Paginator(ratings, 5)
+    paginator = Paginator(ratings, 15)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
