@@ -3,7 +3,7 @@
 
 {% block content %}
   {% include "_header.html" %}
-  <main class="bg-[#201F1F] text-white px-6 md:px-12 pb-16 flex-grow">
+  <main class="bg-[#201F1F] text-white px-6 md:px-12 flex-grow">
     <div class="relative z-10 px-6 lg:px-12 py-8 max-w-[1300px] mx-auto w-full">
       <h2 class="text-[42px] font-semibold leading-snug text-white font-['Nunito_Sans'] mb-4 break-words">
         My ratings
@@ -11,7 +11,8 @@
     </div>
 
     {% if ratings %}
-      <ul class="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 px-6 lg:px-12 max-w-[1300px] mx-auto">
+      <ul
+        class="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 px-6 lg:px-12 max-w-[1300px] mx-auto">
         {% for r in ratings %}
           <li class="group cursor-pointer">
             <a href="{% url 'reelchoice_app:movie_detail' r.id %}">
@@ -35,7 +36,7 @@
                   {{ r.title }}
                 </h4>
                 <div class="flex items-center gap-1 text-sm mt-1">
-                  <img src="{% static 'images/rating.png' %}" alt="star" class="w-4 h-4" />
+                  <img src="{% static 'images/rating.png' %}" alt="star" class="w-4 h-4"/>
                   <p class="text-sm italic text-gray-400 m-0 mr-1">Your rating:</p>
                   <span class="font-light">{{ r.score|floatformat:1|default:"-" }}</span>
                 </div>
@@ -45,16 +46,25 @@
         {% endfor %}
       </ul>
 
-      <div class="text-center mt-12 text-white text-lg">
-        Want better recommendations? Rate more
-        <a href="{% url 'reelchoice_app:home' %}" class="font-semibold hover:underline text-[#BA4040]">movies</a>
-        on ReelChoice!
-      </div>
+      {% if ratings|length < 5 %}
+        <div class="text-center mt-6 text-white text-lg">
+          Rate at least 5 movies to unlock personalized recommendations!
+          <a href="{% url 'reelchoice_app:home' %}" class="font-semibold hover:underline text-[#BA4040]">Start
+            exploring</a>.
+        </div>
+      {% else %}
+        <div class="text-center mt-12 text-white text-lg">
+          Want better recommendations? Rate more
+          <a href="{% url 'reelchoice_app:home' %}" class="font-semibold hover:underline text-[#BA4040]">movies</a>
+          on ReelChoice!
+        </div>
+      {% endif %}
 
       {% if is_paginated %}
         <div class="mt-12 flex justify-center items-center space-x-1 text-sm text-white">
           {% if page_obj.has_previous %}
-            <a href="?page={{ page_obj.previous_page_number }}" class="px-2 py-1 rounded bg-[#424242] hover:bg-[#BA4040] transition">‹</a>
+            <a href="?page={{ page_obj.previous_page_number }}"
+               class="px-2 py-1 rounded bg-[#424242] hover:bg-[#BA4040] transition">‹</a>
           {% else %}
             <span class="px-2 py-1 rounded bg-[#424242] text-gray-400">‹</span>
           {% endif %}
@@ -65,14 +75,16 @@
                 {% if num == current %}
                   <span class="px-3 py-1 rounded bg-[#BA4040] text-white font-semibold">{{ num }}</span>
                 {% else %}
-                  <a href="?page={{ num }}" class="px-3 py-1 rounded bg-[#424242] hover:bg-[#BA4040] transition">{{ num }}</a>
+                  <a href="?page={{ num }}"
+                     class="px-3 py-1 rounded bg-[#424242] hover:bg-[#BA4040] transition">{{ num }}</a>
                 {% endif %}
               {% else %}
                 {% if num >= current|add:"-2" and num <= current|add:"2" %}
                   {% if num == current %}
                     <span class="px-3 py-1 rounded bg-[#BA4040] text-white font-semibold">{{ num }}</span>
                   {% else %}
-                    <a href="?page={{ num }}" class="px-3 py-1 rounded bg-[#424242] hover:bg-[#BA4040] transition">{{ num }}</a>
+                    <a href="?page={{ num }}"
+                       class="px-3 py-1 rounded bg-[#424242] hover:bg-[#BA4040] transition">{{ num }}</a>
                   {% endif %}
                 {% endif %}
               {% endif %}
@@ -87,7 +99,8 @@
           {% endwith %}
 
           {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}" class="px-2 py-1 rounded bg-[#424242] hover:bg-[#BA4040] transition">›</a>
+            <a href="?page={{ page_obj.next_page_number }}"
+               class="px-2 py-1 rounded bg-[#424242] hover:bg-[#BA4040] transition">›</a>
           {% else %}
             <span class="px-2 py-1 rounded bg-[#424242] text-gray-400">›</span>
           {% endif %}
@@ -97,9 +110,11 @@
     {% else %}
       <p class="text-center text-gray-400 text-lg mt-12">You haven't rated any movies yet.</p>
       <div class="text-center mt-6 text-white text-lg">
-        Rate at least 5 movies to unlock personalized recommendations! 
-        <a href="{% url 'reelchoice_app:home' %}" class="font-semibold hover:underline text-[#BA4040]">Start exploring</a>.
+        Rate at least 5 movies to unlock personalized recommendations!
+        <a href="{% url 'reelchoice_app:home' %}" class="font-semibold hover:underline text-[#BA4040]">Start
+          exploring</a>.
       </div>
+
     {% endif %}
   </main>
   {% include "_footer.html" %}

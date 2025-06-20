@@ -52,6 +52,14 @@ def home(request):
     horror_qs = Movie.objects.filter(genres__name__iexact='Horror')
     horror = random.sample(list(horror_qs), min(5, horror_qs.count()))
 
+    # Adventure
+    adventure_qs = Movie.objects.filter(genres__name__iexact='Adventure')
+    adventure = random.sample(list(adventure_qs), min(5, adventure_qs.count()))
+
+    # Comedy
+    comedy_qs = Movie.objects.filter(genres__name__iexact='Comedy')
+    comedy = random.sample(list(comedy_qs), min(5, comedy_qs.count()))
+
     # Rate More Movies
     if user.is_authenticated:
         rated_ids = user.ratings.values_list('movie_id', flat=True)
@@ -66,6 +74,8 @@ def home(request):
         {"title": "Recommended for you", "movies": recommended},
         {"title": "Based on a true story", "movies": true_story},
         {"title": "Top Horror Movies", "movies": horror},
+        {"title": "Top Adventure Movies", "movies": adventure},
+        {"title": "Top Comedy Movies", "movies": comedy},
         {"title": "Rate More Movies", "movies": unrated},
     ]
 
@@ -105,7 +115,7 @@ def ratings_view(request):
         for r in ratings_qs
     ]
 
-    paginator = Paginator(ratings, 5)
+    paginator = Paginator(ratings, 15)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
@@ -183,6 +193,12 @@ def category_view(request, title):
 
     elif title == "Top Horror Movies":
         movie_list = Movie.objects.filter(genres__name__iexact="Horror")
+
+    elif title == "Top Adventure Movies":
+        movie_list = Movie.objects.filter(genres__name__iexact="Adventure")
+
+    elif title == "Top Comedy Movies":
+        movie_list = Movie.objects.filter(genres__name__iexact="Comedy")
 
     elif title == "Rate More Movies":
         rated_ids = request.user.ratings.values_list('movie_id', flat=True)

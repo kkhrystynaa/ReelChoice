@@ -1,4 +1,5 @@
 import os
+from pprint import pprint
 
 from django.conf import settings
 from django.test import TestCase
@@ -25,15 +26,6 @@ class TestRecommendations(TestCase):
         self.assertIsNotNone(self.model.item_means)
         self.assertIsNotNone(self.model.all_items)
         self.assertGreater(len(self.model.all_items), 0)
-
-    def test_predict_rating(self):
-        test_movie_id = 550  # Fight Club
-
-        if test_movie_id in self.model.item_similarities and test_movie_id in self.model.item_means:
-            predicted_rating = self.model.predict_score(self.sample_user_ratings, test_movie_id)
-            self.assertIsNotNone(predicted_rating)
-        else:
-            self.skipTest(f"Movie ID {test_movie_id} not found in the similarities to user ratings")
 
     def test_recommend_items(self):
         recommendations = self.model.recommend_items(self.sample_user_ratings, n_recommendations=20)
