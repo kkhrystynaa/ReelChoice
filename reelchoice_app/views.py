@@ -12,7 +12,7 @@ from ReelChoice import settings
 from recommender.recommender import ItemBasedCF
 from .forms import CommentForm
 from .models import Movie, Rating
-from .services import write_comment, rate_movie
+from .services import write_comment, rate_movie, delete_rating
 
 MODEL_PATH = os.path.join(settings.BASE_DIR, 'recommender/trained_model.pkl')
 

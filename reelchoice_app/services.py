@@ -25,6 +25,18 @@ def rate_movie(user, movie_id, score):
     return rating
 
 
+def delete_rating(user, movie_id):
+    """
+    Deletes the rating for the movie with movie_id by the given user.
+    Returns True if a rating was deleted, False if no rating existed.
+    """
+    rating = Rating.objects.filter(user=user, movie_id=movie_id).first()
+    if rating:
+        rating.delete()
+        return True
+    return False
+
+
 def write_comment(user, movie_id, content):
     """
     Creates a comment with 'content' for the movie with movie_id on behalf of the user.
