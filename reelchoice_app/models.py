@@ -45,7 +45,7 @@ class Movie(models.Model):
     runtime = models.PositiveIntegerField("Тривалість (хв)", null=True, blank=True)
     vote_average = models.FloatField(
         "Середній рейтинг",
-        validators=[MinValueValidator(0), MaxValueValidator(10)],
+        validators=[MinValueValidator(1), MaxValueValidator(10)],
         null=True,
         blank=True
     )
