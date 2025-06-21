@@ -86,11 +86,12 @@
               <span class="font-light italic text-lg">
               Your rating: {{ user_rating.score }}/10
               </span>
-              <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="delete_rating" value="true" />
-                <button type="submit" class="font-light italic text-sm text-gray-500 hover:text-gray-300">Remove</button>
-              </form>
+                <form method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="delete_rating" value="true"/>
+                  <button type="submit" class="font-light italic text-sm text-gray-500 hover:text-gray-300">Remove
+                  </button>
+                </form>
               </div>
             {% endif %}
           </div>
@@ -138,7 +139,20 @@
                 <div class="flex-1">
                   <div class="flex justify-between items-center">
                     <span class="font-semibold text-white">{{ comment.user.username }}</span>
-                    <span class="text-sm text-gray-400">{{ comment.created_at|date:"d.m.Y, H:i" }}</span>
+                    <form method="post">
+                      {% csrf_token %}
+                      <div class="flex items-center gap-2">
+                        {% if comment.user == request.user %}
+                          <input type="hidden" name="delete_comment" value="true"/>
+                          <button type="submit" class="text-sm text-gray-400 hover:text-gray-300">
+                            Remove comment
+                          </button>
+                          <span class="text-sm text-gray-400">|</span>
+                        {% endif %}
+                        <span class="text-sm text-gray-400">{{ comment.created_at|date:"d.m.Y, H:i" }}</span>
+                      </div>
+                    </form>
+
                   </div>
                   <p class="text-gray-300 mt-2 whitespace-pre-line">{{ comment.content }}</p>
                 </div>
