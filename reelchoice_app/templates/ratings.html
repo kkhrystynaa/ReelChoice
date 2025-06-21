@@ -46,22 +46,14 @@
         {% endfor %}
       </ul>
 
-      {% if ratings|length < 5 %}
-        <div class="text-center mt-6 text-white text-lg">
-          Rate at least 5 movies to unlock personalized recommendations!
-          <a href="{% url 'reelchoice_app:home' %}" class="font-semibold hover:underline text-[#BA4040]">Start
-            exploring</a>.
-        </div>
-      {% else %}
-        <div class="text-center mt-12 text-white text-lg">
-          Want better recommendations? Rate more
-          <a href="{% url 'reelchoice_app:home' %}" class="font-semibold hover:underline text-[#BA4040]">movies</a>
-          on ReelChoice!
-        </div>
-      {% endif %}
+      <div class="text-center my-12 text-white text-lg">
+        Want better recommendations? Rate more
+        <a href="{% url 'reelchoice_app:home' %}" class="font-semibold hover:underline text-[#BA4040]">movies</a>
+        on ReelChoice!
+      </div>
 
       {% if is_paginated %}
-        <div class="mt-12 flex justify-center items-center space-x-1 text-sm text-white">
+        <div class="my-12 flex justify-center items-center space-x-1 text-sm text-white">
           {% if page_obj.has_previous %}
             <a href="?page={{ page_obj.previous_page_number }}"
                class="px-2 py-1 rounded bg-[#424242] hover:bg-[#BA4040] transition">‹</a>
