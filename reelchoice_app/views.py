@@ -147,6 +147,10 @@ def movie_details_view(request, movie_id):
             except ValidationError as e:
                 form_error = str(e)
 
+        elif "delete_rating" in request.POST:
+            delete_rating(request.user, movie.id)
+            return redirect('reelchoice_app:movie_detail', movie_id=movie.id)
+
         form = CommentForm(request.POST)
         if form.is_valid():
             try:

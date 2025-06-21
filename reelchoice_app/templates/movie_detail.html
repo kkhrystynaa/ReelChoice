@@ -82,10 +82,15 @@
               </button>
             </form>
             {% if user_rating %}
-              <div class="mt-4">
+              <div class="flex items-center gap-4 mt-4">
               <span class="font-light italic text-lg">
               Your rating: {{ user_rating.score }}/10
               </span>
+              <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="delete_rating" value="true" />
+                <button type="submit" class="font-light italic text-sm text-gray-500 hover:text-gray-300">Remove</button>
+              </form>
               </div>
             {% endif %}
           </div>
