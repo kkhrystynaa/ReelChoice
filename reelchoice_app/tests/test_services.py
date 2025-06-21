@@ -18,16 +18,16 @@ User = get_user_model()
 class ServicesTestCase(TestCase):
 
     def setUp(self):
-        # Створюємо користувачів
+        # Create users
         self.user1 = User.objects.create_user(username="alice", password='testpass')
         self.user2 = User.objects.create_user(username="bob", password='testpass')
 
-        # Створюємо жанри
+        # Create genres
         self.genre_action = Genre.objects.create(name="Action")
         self.genre_scifi = Genre.objects.create(name="Science Fiction")
         self.genre_drama = Genre.objects.create(name="Drama")
 
-        # Створюємо фільми
+        # Create movies
         self.movie1 = Movie.objects.create(
             id=1,
             title="Inception",
@@ -43,11 +43,11 @@ class ServicesTestCase(TestCase):
             vote_average=8.6
         )
 
-        # Зв'язуємо фільми з жанрами
+        # Link movies with genres
         self.movie1.genres.add(self.genre_action, self.genre_scifi)
         self.movie2.genres.add(self.genre_scifi)
 
-        # Створюємо коментарі
+        # Create comments
         self.comment1 = Comment.objects.create(
             user=self.user1,
             movie=self.movie1,
@@ -60,7 +60,7 @@ class ServicesTestCase(TestCase):
             content="Mind-blowing."
         )
 
-        # Створюємо оцінки
+        # Create ratings
         Rating.objects.create(user=self.user2, movie=self.movie1, score=9)
         Rating.objects.create(user=self.user2, movie=self.movie2, score=8)
 
@@ -141,7 +141,6 @@ class ServicesTestCase(TestCase):
 
     def test_movie_detail_without_user_rating(self):
         data = get_movie_detail_info(self.user1, self.movie1.id)
-
         self.assertEqual(data["title"], "Inception")
         self.assertEqual(data["poster_path"], "/inception.jpg")
         self.assertEqual(data["runtime"], 148)
@@ -153,7 +152,6 @@ class ServicesTestCase(TestCase):
     def test_movie_detail_with_user_rating(self):
         Rating.objects.create(user=self.user1, movie=self.movie1, score=9)
         data = get_movie_detail_info(self.user1, self.movie1.id)
-
         self.assertEqual(data["user_rating"], 9)
 
     def test_invalid_movie_id_in_detail_raises_404(self):
@@ -164,12 +162,9 @@ class ServicesTestCase(TestCase):
 
     def test_get_comments_for_movie(self):
         comments = get_movie_comments(self.movie1.id)
-
         self.assertEqual(len(comments), 2)
-
         users = [c.user.username for c in comments]
         contents = [c.content for c in comments]
-
         self.assertIn("alice", users)
         self.assertIn("bob", users)
         self.assertIn("Amazing film!", contents)
@@ -187,12 +182,9 @@ class ServicesTestCase(TestCase):
 
     def test_returns_only_user_ratings(self):
         data = list(get_user_ratings_data(self.user2))
-
         self.assertEqual(len(data), 2)
-
         titles = [item['title'] for item in data]
         scores = [item['score'] for item in data]
-
         self.assertIn("Inception", titles)
         self.assertIn("Interstellar", titles)
         self.assertIn(9, scores)
@@ -201,5 +193,4 @@ class ServicesTestCase(TestCase):
     def test_no_ratings_returns_empty_list(self):
         new_user = User.objects.create_user(username="no_ratings", password="no_ratings")
         data = list(get_user_ratings_data(new_user))
-
         self.assertEqual(data, [])

@@ -8,9 +8,9 @@ User = get_user_model()
 
 def rate_movie(user, movie_id, score):
     """
-    Задає або оновлює рейтинг для фільму від імені user.
-    - score: int від 1 до 10
-    Повертає об’єкт Rating.
+    Sets or updates the rating for a movie on behalf of the user.
+    - score: int from 1 to 10
+    Returns the Rating object.
     """
     if not 1 <= score <= 10:
         raise ValidationError("Score must be between 1 and 10")
@@ -27,12 +27,12 @@ def rate_movie(user, movie_id, score):
 
 def write_comment(user, movie_id, content):
     """
-    Створює коментар 'content' до фільму з movie_id від імені user.
-    Повертає об’єкт Comment.
+    Creates a comment with 'content' for the movie with movie_id on behalf of the user.
+    Returns the Comment object.
     """
     text = content.strip()
     if not text:
-        raise ValidationError("Коментар не може бути порожнім")
+        raise ValidationError("Comment must not be empty")
 
     movie = get_object_or_404(Movie, pk=movie_id)
 
@@ -46,8 +46,11 @@ def write_comment(user, movie_id, content):
 
 def get_user_ratings_data(user):
     """
-    Повертає список словників із полями:
-    'title', 'poster_path', 'score'
+    Returns a list of dictionaries for the given user's movie ratings.
+    Each dictionary contains the following fields:
+    - 'title': the movie's title
+    - 'poster_path': the path to the movie's poster
+    - 'score': the user's rating score
     """
     qs = (
         Rating.objects
@@ -67,9 +70,13 @@ def get_user_ratings_data(user):
 
 def search_movies_by_title(search_text):
     """
-    Повертає фільми, назви яких починаються з `search_text` (case-insensitive),
-    відсортовані за vote_average (спадання), і повертає лише поля:
-    title, poster_path, vote_average.
+    Returns a QuerySet of movies whose titles start with `search_text` (case-insensitive).
+    The results are sorted by vote_average in descending order.
+
+    Each result includes the following fields:
+    - 'title': the movie's title
+    - 'poster_path': the path to the movie's poster
+    - 'vote_average': the movie's average rating
     """
     if not search_text:
         return Movie.objects.none()
@@ -84,8 +91,12 @@ def search_movies_by_title(search_text):
 
 def get_movies_by_genre(genre_id):
     """
-    Повертає QuerySet фільмів, що належать до жанру з id=genre_id,
-    з полями: title, poster_path, vote_average.
+    Returns a QuerySet of movies that belong to the genre with the given genre_id.
+
+    Each result includes the following fields:
+    - 'title': the movie's title
+    - 'poster_path': the path to the movie's poster
+    - 'vote_average': the movie's average rating
     """
     return (
         Movie.objects
@@ -96,14 +107,16 @@ def get_movies_by_genre(genre_id):
 
 def get_movie_detail_info(user, movie_id):
     """
-    Повертає словник з інформацією про фільм:
-      - title
-      - poster_path
-      - runtime
-      - vote_average
-      - overview
-      - user_rating (ціле число від 1..10 або None)
-      - genres (рядок, назви через кому)
+    Returns a dictionary with detailed information about a movie.
+
+    Includes the following fields:
+    - 'title': the movie's title
+    - 'poster_path': the path to the movie's poster
+    - 'runtime': the movie's duration in minutes
+    - 'vote_average': the movie's average rating
+    - 'overview': a short summary of the movie
+    - 'user_rating': the current user's rating (integer from 1 to 10 or None)
+    - 'genres': a comma-separated string of genre names
     """
     movie = get_object_or_404(
         Movie.objects.prefetch_related('genres'),
@@ -131,8 +144,13 @@ def get_movie_detail_info(user, movie_id):
 
 def get_movie_comments(movie_id):
     """
-    Повертає QuerySet об’єктів Comment для фільму з id=movie_id,
-    разом із username автора та created_at, відсортовані за часом.
+    Returns a QuerySet of Comment objects for the movie with the given movie_id.
+
+    Each comment includes:
+    - the user's username (via select_related)
+    - the comment content and creation timestamp
+
+    The comments are sorted by creation time (ascending).
     """
     get_object_or_404(Movie, pk=movie_id)
 
