@@ -56,6 +56,14 @@ def write_comment(user, movie_id, content):
     return comment
 
 
+def delete_comment(comment_id):
+    """
+    Deletes a comment with the given comment_id if it belongs to the user.
+    """
+    comment = get_object_or_404(Comment, id=comment_id)
+    comment.delete()
+
+
 def get_user_ratings_data(user):
     """
     Returns a list of dictionaries for the given user's movie ratings.

@@ -12,7 +12,7 @@ from ReelChoice import settings
 from recommender.recommender import ItemBasedCF
 from .forms import CommentForm
 from .models import Movie, Rating
-from .services import write_comment, rate_movie, delete_rating
+from .services import write_comment, rate_movie, delete_rating, delete_comment
 
 MODEL_PATH = os.path.join(settings.BASE_DIR, 'recommender/trained_model.pkl')
 
@@ -149,6 +149,11 @@ def movie_details_view(request, movie_id):
 
         elif "delete_rating" in request.POST:
             delete_rating(request.user, movie.id)
+            return redirect('reelchoice_app:movie_detail', movie_id=movie.id)
+
+        elif "delete_comment" in request.POST:
+            delete_comment_id = request.POST.get("delete_comment")
+            delete_comment(delete_comment_id)
             return redirect('reelchoice_app:movie_detail', movie_id=movie.id)
 
         form = CommentForm(request.POST)
