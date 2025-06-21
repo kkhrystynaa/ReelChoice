@@ -1,5 +1,4 @@
 import os
-from pprint import pprint
 
 from django.conf import settings
 from django.test import TestCase

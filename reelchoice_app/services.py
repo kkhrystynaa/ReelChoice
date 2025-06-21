@@ -1,8 +1,8 @@
+from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
-from django.contrib.auth import get_user_model
 
-from .models import Genre, Company, Country, Movie, Comment, Rating
+from .models import Movie, Comment, Rating
 
 User = get_user_model()
 
