@@ -10,7 +10,9 @@ from reelchoice_app.services import (
     write_comment,
     get_movie_detail_info,
     get_movie_comments,
-    get_user_ratings_data
+    get_user_ratings_data,
+    delete_rating,
+    delete_comment
 )
 
 User = get_user_model()
@@ -194,3 +196,26 @@ class ServicesTestCase(TestCase):
         new_user = User.objects.create_user(username="no_ratings", password="no_ratings")
         data = list(get_user_ratings_data(new_user))
         self.assertEqual(data, [])
+
+
+    def test_delete_rating_if_exists(self):
+        self.assertEqual(Rating.objects.count(), 2)
+        result = delete_rating(self.user2, self.movie1.id)
+        self.assertTrue(result)
+        self.assertEqual(Rating.objects.count(), 1)
+
+    def test_delete_rating_if_not_exists(self):
+        result = delete_rating(self.user1, self.movie1.id)
+        self.assertFalse(result)
+
+
+    def test_delete_comment_success(self):
+        self.assertEqual(Comment.objects.count(), 2)
+        delete_comment(self.comment1.id)
+        self.assertEqual(Comment.objects.count(), 1)
+
+    def test_delete_comment_invalid_id(self):
+        invalid_id = self.comment2.id
+        self.comment2.delete()
+        with self.assertRaisesMessage(Exception, 'No Comment matches the given query.'):
+            delete_comment(invalid_id)
