@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+  {% include "_header.html" %}
+
+  <main class="bg-[#201F1F] text-white px-6 md:px-12 pb-16 flex-grow">
+    <div class="max-w-[1300px] mx-auto px-6 md:px-12 py-8">
+
+      <div class="flex flex-col md:flex-row gap-8">
+        <!-- Movie Poster -->
+        <div class="w-full md:w-1/4">
+          <div class="aspect-[2/3] bg-[rgba(128,128,128,0.25)] rounded-lg overflow-hidden">
+            {% if movie.poster_path %}
+              <img
+                src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}"
+                alt="{{ movie.title }}"
+                class="w-full h-full object-cover"
+              />
+            {% else %}
+              <img
+                src="{% static 'images/default_poster.jpg' %}"
+                alt="No image"
+                class="w-full h-full object-cover opacity-50"
+              />
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Movie Details -->
+        <div class="w-full md:w-3/4">
+          <h1 class="text-3xl md:text-4xl font-bold mb-4">{{ movie.title }}</h1>
+
+          <div class="items-center gap-2 text-sm mb-4">
+            <span class="font-light italic text-lg">
+              Year: {{ movie.release_date|date:"Y" }}<br>
+              Duration: {{ movie.runtime }} min
+            </span>
+            <div class="flex items-center">
+              <span class="font-light italic text-lg">
+                Average rating: {{ movie.vote_average|floatformat:1|default:"-" }}
+              </span>
+              <img src="{% static 'images/rating.png' %}" alt="star" class="w-5 h-5 mx-1"/>
+            </div>
+          </div>
+
+          <div class="mb-6">
+            <h2 class="text-lg font-semibold mb-2">Genres</h2>
+            <div class="flex flex-wrap gap-2">
+              {% for genre in movie.genres.all %}
+                <span class="bg-gray-700 rounded-full px-3 py-1 text-sm">{{ genre }}</span>
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Star Rating -->
+          <div class="mb-10">
+            <h3 class="text-xl font-semibold text-white mb-2">Rate this movie:</h3>
+            <form id="rating-form" method="post" class="flex items-center gap-4 select-none">
+              {% csrf_token %}
+              <div id="stars" class="flex gap-1">
+                {% for i in rating_range %}
+                  <svg
+                    data-value="{{ i }}"
+                    class="w-8 h-8 text-[#424242] cursor-pointer transition-colors"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.95a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.95c.3.922-.755 1.688-1.54 1.118l-3.37-2.449a1 1 0 00-1.175 0l-3.37 2.449c-.784.57-1.838-.196-1.539-1.118l1.286-3.95a1 1 0 00-.364-1.118L2.075 9.377c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.951-.69l1.286-3.95z"></path>
+                  </svg>
+                {% endfor %}
+              </div>
+
+              <input type="hidden" name="score" id="score-input" value="{{ user_rating.score|default:'' }}"/>
+              <button
+                type="submit"
+                class="ml-4 px-5 py-2 bg-[#BA4040] hover:bg-[#a23232] text-white font-semibold rounded-lg shadow transition"
+              >
+                Rate
+              </button>
+            </form>
+            {% if user_rating %}
+              <div class="flex items-center gap-4 mt-4">
+              <span class="font-light italic text-lg">
+              Your rating: {{ user_rating.score }}/10
+              </span>
+                <form method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="delete_rating" value="true"/>
+                  <button type="submit" class="font-light italic text-sm text-gray-500 hover:text-gray-300">Remove
+                  </button>
+                </form>
+              </div>
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+      <div class="my-6">
+        <h2 class="text-xl font-semibold mb-2">Overview</h2>
+        <p class="text-gray-300">{{ movie.overview }}</p>
+      </div>
+
+      <!-- Comments Section -->
+      <div class="mt-10">
+        <h2 class="text-2xl font-semibold mb-4 text-white">Comments section</h2>
+
+        {% if user.is_authenticated %}
+          <form method="post" class="mb-8">
+            {% csrf_token %}
+            <div>
+              {{ form.content }}
+            </div>
+            {% if form_error %}
+              <p class="text-red-400 mt-2">{{ form_error }}</p>
+            {% endif %}
+            <button
+              type="submit"
+              class="mt-4 px-10 py-2 bg-gray-300 text-black rounded-lg hover:bg-[#BA4040] transition font-semibold shadow"
+            >
+              Post
+            </button>
+          </form>
+        {% endif %}
+
+        <!-- Added Comments -->
+        <div class="space-y-6">
+          {% for comment in comments %}
+            <div class="bg-[#2a2a2a] p-4 rounded-lg shadow-sm">
+              <div class="flex items-start gap-4">
+                <div
+                  class="w-10 h-10 bg-gray-600 rounded-full flex items-center justify-center text-white font-bold uppercase"
+                >
+                  {{ comment.user.username|first }}
+                </div>
+                <div class="flex-1">
+                  <div class="flex justify-between items-center">
+                    <span class="font-semibold text-white">{{ comment.user.username }}</span>
+                    <form method="post">
+                      {% csrf_token %}
+                      <div class="flex items-center gap-2">
+                        {% if comment.user == request.user %}
+                          <input type="hidden" name="delete_comment" value="{{ comment.id }}"/>
+                          <button type="submit" class="text-sm text-gray-400 hover:text-gray-300">
+                            Remove comment
+                          </button>
+                          <span class="text-sm text-gray-400">|</span>
+                        {% endif %}
+                        <span class="text-sm text-gray-400">{{ comment.created_at|date:"d.m.Y, H:i" }}</span>
+                      </div>
+                    </form>
+
+                  </div>
+                  <p class="text-gray-300 mt-2 whitespace-pre-line">{{ comment.content }}</p>
+                </div>
+              </div>
+            </div>
+          {% empty %}
+            <p class="text-gray-500">No comments yet. Be the first to comment!</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </main>
+
+  {% include "_footer.html" %}
+{% endblock %}

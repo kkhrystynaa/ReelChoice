@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+  <div class="bg-[#201F1F] flex flex-col min-h-screen">
+
+    {% include "_header.html" %}
+
+    <div class="relative z-10 px-6 md:px-12 py-8 max-w-[1300px] mx-auto w-full">
+      <h2 class="text-[42px] font-semibold leading-snug text-white font-['Nunito_Sans'] mb-4 break-words">
+        Search results for "<span class="text-[#B94040]">{{ query }}</span>"
+      </h2>
+    </div>
+
+    <!-- Search Results Main -->
+    <main class="bg-[#201F1F] text-white px-6 md:px-12 pb-16 flex-grow max-w-[1300px] mx-auto">
+      {% if movies %}
+        <ul class="grid gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {% for movie in movies %}
+            <li class="group cursor-pointer">
+              <a href="{% url 'reelchoice_app:movie_detail' movie.id %}">
+                <div class="aspect-[2/3] bg-[rgba(128,128,128,0.25)] rounded-lg overflow-hidden">
+                  {% if movie.poster_path %}
+                    <img
+                      src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}"
+                      alt="{{ movie.title }}"
+                      class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  {% else %}
+                    <img
+                      src="{% static 'images/default_poster.jpg' %}"
+                      alt="No image"
+                      class="w-full h-full object-cover opacity-50"
+                    />
+                  {% endif %}
+                </div>
+                <div class="mt-3">
+                  <h4 class="text-xl font-medium italic truncate" title="{{ movie.title }}">
+                    {{ movie.title }}
+                  </h4>
+                  <div class="flex items-center gap-1 text-sm mt-1">
+                    <img src="{% static 'images/rating.png' %}" alt="star" class="w-4 h-4">
+                    <span class="font-light">{{ movie.vote_average|floatformat:1|default:"-" }}</span>
+                  </div>
+                </div>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-center text-gray-400 text-lg mt-12">No movies found</p>
+      {% endif %}
+    </main>
+
+    {% include "_footer.html" %}
+
+  </div>
+{% endblock %}
